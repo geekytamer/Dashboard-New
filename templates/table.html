@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Details Table</title>
+</head>
+
+<body>
+    <h1>Car Details</h1>
+
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <label for="licensePlateFilter" class="form-label">License Plate:</label>
+            <input type="text" class="form-control" id="licensePlateFilter">
+        </div>
+        <div class="col-md-3">
+            <label for="siteFilter" class="form-label">Site:</label>
+            <input type="text" class="form-control" id="siteFilter">
+        </div>
+        <div class="col-md-3">
+            <label for="carMakeFilter" class="form-label">Car Make:</label>
+            <input type="text" class="form-control" id="carMakeFilter">
+        </div>
+        <div class="col-md-3">
+            <label for="carTypeFilter" class="form-label">Car Type:</label>
+            <input type="text" class="form-control" id="carTypeFilter">
+        </div>
+    </div>
+    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>License Plate</th>
+                <th>Car Type</th>
+                <th>Car Make</th>
+                <th>Car Color</th>
+                <th>Time of Detection</th>
+                <th>Site</th>
+                <th>Image</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for car in cars %}
+            <tr data-license-plate="{{ car.license_plate_number }}" data-site="{{ car.site }}" data-car-make="{{ car.car_make }}" data-car-type="{{ car.car_type }}">
+                <td><img class="rounded-circle me-2" width="30" height="30" src="{{ car.image_path }}"> {{ car.license_plate_number }}</td>
+                <td>{{ car.car_type }}</td>
+                <td>{{ car.car_make }}</td>
+                <td>{{ car.car_color }}</td>
+                <td>{{ car.time_of_detection }}</td>
+                <td>{{ car.site }}</td>
+                <td>
+                    <button onclick="openImage('{{ car.image_path }}')">View Image</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const filterInputs = document.querySelectorAll('.form-control');
+            const rows = document.querySelectorAll('tbody tr');
+    
+            filterInputs.forEach(input => {
+                input.addEventListener('input', filterTable);
+            });
+    
+            function filterTable() {
+                const licensePlateFilter = document.getElementById('licensePlateFilter').value.toUpperCase();
+                const siteFilter = document.getElementById('siteFilter').value.toUpperCase();
+                const carMakeFilter = document.getElementById('carMakeFilter').value.toUpperCase();
+                const carTypeFilter = document.getElementById('carTypeFilter').value.toUpperCase();
+    
+                rows.forEach(row => {
+                    const licensePlate = row.dataset.licensePlate.toUpperCase();
+                    const site = row.dataset.site.toUpperCase();
+                    const carMake = row.dataset.carMake.toUpperCase();
+                    const carType = row.dataset.carType.toUpperCase();
+    
+                    if (
+                        licensePlate.includes(licensePlateFilter) &&
+                        site.includes(siteFilter) &&
+                        carMake.includes(carMakeFilter) &&
+                        carType.includes(carTypeFilter)
+                    ) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+    
+            // Function to open image in a new tab
+            function openImage(imagePath) {
+                window.open(imagePath, '_blank');
+            }
+        });
+    </script>
+</body>
+
+</html>
